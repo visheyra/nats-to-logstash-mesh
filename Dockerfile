@@ -46,7 +46,6 @@ RUN bin/logstash-plugin remove logstash-input-azure_event_hubs && \
   bin/logstash-plugin remove logstash-output-s3 && \
   bin/logstash-plugin remove logstash-output-sns && \
   bin/logstash-plugin remove logstash-output-sqs && \
-  bin/logstash-plugin remove logstash-output-stdout && \
   bin/logstash-plugin remove logstash-output-tcp && \
   bin/logstash-plugin remove logstash-output-udp && \
   bin/logstash-plugin remove logstash-output-webhdfs
