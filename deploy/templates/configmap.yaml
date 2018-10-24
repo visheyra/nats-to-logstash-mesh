@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "component.name" . }}
+  namespace: {{ .Values.global.kubernetes.namespace }}
+  labels:
+    app: {{ template "component.name" . }}
+    name: {{ template "component.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  config.conf: |-
+    input {
+      nats {
+        host => "{{ .Values.input.nats.endpoint }}"
+        port => "{{ .Values.input.nats.port }}"
+        user => "{{ .Values.input.nats.user }}"
+        pass => "{{ .Values.input.nats.password }}"
+        subjects => [ "{{- join "\", \"" .Values.input.nats.subjects }}" ]
+      }
+    }
+    output {
+      {{- if .Values.output.debug }}
+      stdout {
+        codec => "rubydebug"
+      }
+      {{- end }}
+    }

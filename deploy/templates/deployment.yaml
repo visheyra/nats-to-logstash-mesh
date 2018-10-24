@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "component.name" . }}
+  namespace: {{ .Values.global.kubernetes.namespace }}
+  labels:
+    app: {{ template "component.name" . }}
+    name: {{ template "component.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.kubernetes.replicas }}
+  template:
+    metadata:
+      annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        app: {{ template "component.name" . }}
+        name: {{ template "component.name" . }}
+        chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+    spec:
+      containers:
+      - name: logstash
+        image: {{ .Values.kubernetes.container.image }}:{{ .Values.kubernetes.container.tag }}
+        command: ["/usr/share/logstash/bin/logstash"]
+        args:
+          - -f
+          - /config/config.conf
+        volumeMounts:
+        - mountPath: /config
+          name: config
+      volumes:
+      - name: config
+        configMap:
+          name: {{ template "component.name" . }}

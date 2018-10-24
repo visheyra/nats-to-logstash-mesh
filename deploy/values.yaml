@@ -1,0 +1,25 @@
+global:
+  istio:
+    lts: false
+  kubernetes:
+    namespace: monitoring
+
+kubernetes:
+  replicas: 1
+  container:
+    imagePullPolicy: Always
+    tag: latest
+    image: visheyra/logstash-input-nats
+input:
+  nats:
+    user: parking_monitoring_user
+    password: parking_monitoring_pwd
+    endpoint: monitoring-nats.monitoring
+    port: 4222
+    subjects:
+    - k8s.>
+    - lol
+output:
+  debug: true
+  lumberjack:
+    test: true
